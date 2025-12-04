@@ -1,0 +1,28 @@
+services:
+  # 1. NODE JS BACKEND
+  - type: web
+    name: interactive-dashboard-backend
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node index.js
+    envVars:
+      - key: PORT
+        value: 3000
+    # IMPORTANT: You must add a Disk in Render Dashboard for /var/lib/data
+    # disk:
+    #   name: data
+    #   mountPath: /var/lib/data
+    #   sizeGB: 1
+
+  # 2. REACT FRONTEND
+  - type: static
+    name: interactive-dashboard-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: interactive-dashboard-backend
+          property: host
